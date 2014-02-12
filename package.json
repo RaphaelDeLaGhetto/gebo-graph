@@ -1,0 +1,30 @@
+{
+  "name": "gebo-graph",
+  "version": "0.0.0",
+  "description": "A connected graph for the gebo-server",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "grunt nodeunit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaphaelDeLaGhetto/gebo-graph.git"
+  },
+  "keywords": [
+    "gebo",
+    "agent",
+    "connected",
+    "graph"
+  ],
+  "author": "Daniel Bidulock",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "624f30a55c01542282668ac8d3c032911c71a055",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-nodeunit": "~0.3.0"
+  }
+}
