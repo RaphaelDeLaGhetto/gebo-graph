@@ -1,5 +1,15 @@
 var graph = require('..');
 
+var GEN_9_6 = '"Whoever sheds human blood,\n' +
+              'by humans shall their blood be shed;\n' +
+              'for in the image of God\n' +
+              'has God made mankind.';
+
+var EXODUS_20_13_16 = '“You shall not murder.\n' +
+                      '“You shall not commit adultery.\n' +
+                      '“You shall not steal.\n' +
+                      '“You shall not give false testimony against your neighbor.\n';
+
 var MATT_6_9_13 = 'Pray then like this:\n' +
                   '"Our Father in heaven,\n' +
                   'hallowed be your name.\n' +
@@ -17,7 +27,7 @@ var MATT_6_9_13 = 'Pray then like this:\n' +
  */
 exports.fromText = {
 
-    'Return a uni-directional connected graph object made from text': function(test) {
+    'Return a non-weighted uni-directional connected graph object made from text': function(test) {
         test.expect(47);
         var g = graph.fromText(MATT_6_9_13);
         test.deepEqual(g['Pray'], ['then']);
@@ -76,6 +86,68 @@ exports.fromText = {
         //test.deepEqual(g['us'], ['from']);
         test.deepEqual(g['from'], ['evil.']);
         test.deepEqual(g['evil.'], []);
+        test.done();
+    },
+
+    'Return a repetitive non-weighted uni-directional connected graph object made from text': function(test) {
+        test.expect(13);
+        var g = graph.fromText(EXODUS_20_13_16);
+        test.deepEqual(g['“You'], ['shall']);
+        test.deepEqual(g['shall'], ['not']);
+        test.deepEqual(g['not'], ['murder.', 'commit', 'steal.', 'give']);
+        test.deepEqual(g['murder.'], ['“You']);
+        //test.deepEqual(g['“You'], ['shall']);
+        //test.deepEqual(g['shall'], ['not']);
+        //test.deepEqual(g['not'], ['commit']);
+        test.deepEqual(g['commit'], ['adultery.']);
+        test.deepEqual(g['adultery.'], ['“You']);
+        //test.deepEqual(g['“You'], ['shall']);
+        //test.deepEqual(g['shall'], ['not']);
+        //test.deepEqual(g['not'], ['steal.']);
+        test.deepEqual(g['steal.'], ['“You']);
+        //test.deepEqual(g['“You'], ['shall']);
+        //test.deepEqual(g['shall'], ['not']);
+        //test.deepEqual(g['not,'], ['give']);
+        test.deepEqual(g['give'], ['false']);
+        test.deepEqual(g['false'], ['testimony']);
+        test.deepEqual(g['testimony'], ['against']);
+        test.deepEqual(g['against'], ['your']);
+        test.deepEqual(g['your'], ['neighbor.']);
+        test.deepEqual(g['neighbor.'], []);
+        test.done();
+    },
+};
+
+/**
+ * weightedFromText
+ */
+exports.weightedFromText = {
+
+    'Return a weighted uni-directional connected graph object made from text': function(test) {
+        test.expect(13);
+        var g = graph.weightedFromText(EXODUS_20_13_16);
+        test.deepEqual(g['“You'], { 'shall': 3 });
+        test.deepEqual(g['shall'], { 'not': 3 });
+        test.deepEqual(g['not'], { 'murder.': 0, 'commit': 0, 'steal.': 0, 'give': 0 });
+        test.deepEqual(g['murder.'], { '“You': 0 });
+        //test.deepEqual(g['“You'], { 'shall': 0 });
+        //test.deepEqual(g['shall'], { 'not': 0 });
+        //test.deepEqual(g['not'], { 'commit': 0 });
+        test.deepEqual(g['commit'], { 'adultery.': 0 });
+        test.deepEqual(g['adultery.'], { '“You': 0 });
+        //test.deepEqual(g['“You'], { 'shall': 0 });
+        //test.deepEqual(g['shall'], { 'not': 0 });
+        //test.deepEqual(g['not'], { 'steal.': 0 });
+        test.deepEqual(g['steal.'], { '“You': 0 });
+        //test.deepEqual(g['“You'], { 'shall': 0 });
+        //test.deepEqual(g['shall'], { 'not': 0 });
+        //test.deepEqual(g['not,'], { 'give': 0 });
+        test.deepEqual(g['give'], { 'false': 0 });
+        test.deepEqual(g['false'], { 'testimony': 0 });
+        test.deepEqual(g['testimony'], { 'against': 0 });
+        test.deepEqual(g['against'], { 'your': 0 });
+        test.deepEqual(g['your'], { 'neighbor.': 0 });
+        test.deepEqual(g['neighbor.'], {});
         test.done();
     },
 };
