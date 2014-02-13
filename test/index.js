@@ -5,10 +5,10 @@ var GEN_9_6 = '"Whoever sheds human blood,\n' +
               'for in the image of God\n' +
               'has God made mankind.';
 
-var EXODUS_20_13_16 = '“You shall not murder.\n' +
-                      '“You shall not commit adultery.\n' +
-                      '“You shall not steal.\n' +
-                      '“You shall not give false testimony against your neighbor.\n';
+var EXODUS_20_13_16 = '“You shall not murder.\n\n' +
+                      '“You shall not commit adultery.\n\n' +
+                      '“You shall not steal.\n\n' +
+                      '“You shall not give false testimony against your neighbor.\n\n';
 
 var MATT_6_9_13 = 'Pray then like this:\n' +
                   '"Our Father in heaven,\n' +

@@ -11,16 +11,23 @@ module.exports = function() {
      */
     function _fromText(text) {
         var graph = {};
-        var splitText = text.split(/\s/);
+        var splitText = text.trim().replace(/\s+/g, ' ').split(' ');
+        var thisWord, nextWord;
 
         for (var i = 0; i < splitText.length - 1; i++) {
-          if (graph[splitText[i]]) {
-            if (graph[splitText[i]].indexOf() < 0) {
-              graph[splitText[i]].push(splitText[i + 1]);
+
+          thisWord = splitText[i];
+          nextWord = splitText[i + 1];
+
+          if (nextWord.length) {
+            if (graph[thisWord]) {
+              if (graph[thisWord].indexOf(nextWord) < 0) {
+                graph[thisWord].push(nextWord);
+              }
+            } 
+            else {
+              graph[thisWord] = [nextWord];
             }
-          } 
-          else {
-            graph[splitText[i]] = [splitText[i + 1]];
           }
         }
         graph[splitText[splitText.length - 1]] = [];
