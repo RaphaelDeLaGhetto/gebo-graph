@@ -54,13 +54,14 @@ module.exports = function() {
           nextWord = splitText[i + 1];
 
           if (graph[thisWord]) {
-            if (graph[thisWord][nextWord]) {
+            if (graph[thisWord][nextWord] >= 0) {
               graph[thisWord][nextWord]++;
-              //graph[thisWord][nextWord] = graph[thisWord][nextWord]+1;
+            }
+            else {
+              graph[thisWord][nextWord] = 0;
             }
           } 
           else {
-            //graph[thisWord] = { nextWord: 0 };
             graph[thisWord] = {};
             graph[thisWord][nextWord] = 0;
           }
