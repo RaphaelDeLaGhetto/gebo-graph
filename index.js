@@ -45,19 +45,27 @@ module.exports = function() {
      */
     function _weightedFromText(text) {
         var graph = {};
-        var splitText = text.split(/\s/);
+        var splitText = text.trim().replace(/\s+/g, ' ').split(' ');
+        var thisWord, nextWord;
 
-//        for (var i = 0; i < splitText.length - 1; i++) {
-//          if (graph[splitText[i]]) {
-//            if (graph[splitText[i]].indexOf() < 0) {
-//              graph[splitText[i]].push(splitText[i + 1]);
-//            }
-//          } 
-//          else {
-//            graph[splitText[i]] = [splitText[i + 1]];
-//          }
-//        }
-//        graph[splitText[splitText.length - 1]] = [];
+        for (var i = 0; i < splitText.length - 1; i++) {
+
+          thisWord = splitText[i];
+          nextWord = splitText[i + 1];
+
+          if (graph[thisWord]) {
+            if (graph[thisWord][nextWord]) {
+              graph[thisWord][nextWord]++;
+              //graph[thisWord][nextWord] = graph[thisWord][nextWord]+1;
+            }
+          } 
+          else {
+            //graph[thisWord] = { nextWord: 0 };
+            graph[thisWord] = {};
+            graph[thisWord][nextWord] = 0;
+          }
+        }
+        graph[splitText[splitText.length - 1]] = {};
 
         return graph;
       };
