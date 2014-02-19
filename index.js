@@ -72,6 +72,36 @@ module.exports = function() {
       };
     exports.weightedFromText = _weightedFromText;
 
+    /**
+     * addToMongoGraph
+     *
+     * @param string
+     */
+    function _addToMongoGraph(text) {
+
+      };
+    exports.addToMongoGraph = _addToMongoGraph;
+
+    /**
+     * subtractFromMongoGraph
+     *
+     * @param string
+     */
+    function _subtractFromMongoGraph(text) {
+
+      };
+    exports.subtractFromMongoGraph = _subtractFromMongoGraph;
+
+    /**
+     * compareWithMongoGraph
+     *
+     * @param string
+     */
+    function _compareWithMongoGraph(text) {
+
+      };
+    exports.compareWithMongoGraph = _compareWithMongoGraph;
+
 
     return exports;
   }();

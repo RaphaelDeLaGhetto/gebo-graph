@@ -22,6 +22,8 @@ var MATT_6_9_13 = 'Pray then like this:\n' +
                   'And lead us not into temptation,\n' +
                   'but deliver us from evil.';
 
+var PROVERBS_16_33 = 'The    lot     is \t  cast into the lap,\n' +
+                     '   but\tits    every  \tdecision is from the       Lord.\n\n\n';
 /**
  * fromText
  */
@@ -148,6 +150,48 @@ exports.weightedFromText = {
         test.deepEqual(g['against'], { 'your': 0 });
         test.deepEqual(g['your'], { 'neighbor.': 0 });
         test.deepEqual(g['neighbor.'], {});
+        test.done();
+    },
+};
+
+/**
+ * addToMongoGraph
+ */
+exports.addToMongoGraph = {
+
+    'Add a record to the corpus collection': function(test) {
+        test.done();
+    },
+
+    'Add each word to the mongo graph collection': function(test) {
+        test.done();
+    },
+};
+
+/**
+ * subtractFromMongoGraph
+ */
+exports.subtractFromMongoGraph = {
+
+    'Remove a record from the corpus collection': function(test) {
+        test.done();
+    },
+
+    'Remove each word from the mongo graph collection': function(test) {
+        test.done();
+    },
+};
+
+/**
+ * compareWithMongoGraph
+ */
+exports.compareWithMongoGraph = {
+
+    'Remove a record from the corpus collection': function(test) {
+        test.done();
+    },
+
+    'Remove each word from the mongo graph collection': function(test) {
         test.done();
     },
 };
