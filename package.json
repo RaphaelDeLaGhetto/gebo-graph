@@ -26,5 +26,8 @@
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-nodeunit": "~0.3.0"
+  },
+  "dependencies": {
+    "gebo-utils": "0.0.0"
   }
 }
