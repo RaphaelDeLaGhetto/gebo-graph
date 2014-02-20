@@ -28,6 +28,6 @@
     "grunt-contrib-nodeunit": "~0.3.0"
   },
   "dependencies": {
-    "gebo-utils": "0.0.0"
+    "gebo-utils": "0.0.x"
   }
 }
