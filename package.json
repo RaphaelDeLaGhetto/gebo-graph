@@ -28,6 +28,7 @@
     "grunt-contrib-nodeunit": "~0.3.0"
   },
   "dependencies": {
-    "gebo-utils": "0.0.x"
+    "gebo-utils": "0.0.x",
+    "mongoose": "~3.8.7"
   }
 }
