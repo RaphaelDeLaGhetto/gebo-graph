@@ -5,7 +5,8 @@ module.exports = function() {
     /**
      * Load and expose the schemata
      */
-    exports.schemata = require('./schemata');
+    var _schemata = require('./schemata');
+    exports.schemata = _schemata;
 
     /**
      * Create a uni-directional connect graph from a string
