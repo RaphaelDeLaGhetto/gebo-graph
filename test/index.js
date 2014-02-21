@@ -155,6 +155,22 @@ exports.weightedFromText = {
 };
 
 /**
+ * The graph schema needs to be added to the gebo's
+ * collection of schemata. This test ensures that this
+ * schema is exposed.
+ */
+exports.schemata = {
+    
+    'Expose the graph schema': function(test) {
+        test.expect(1);
+        var db = new graph.schemata.graph('dan@example.com');
+        test.equal(typeof db, 'object');
+        db.connection.db.close();
+        test.done();
+    },
+};
+
+/**
  * addToMongoGraph
  */
 exports.addToMongoGraph = {
