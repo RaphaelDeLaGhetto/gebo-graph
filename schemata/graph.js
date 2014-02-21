@@ -1,6 +1,6 @@
 'use strict';
 
-var utils = require('../lib/utils');
+var utils = require('gebo-utils');
 
 module.exports = function(email) {
 
