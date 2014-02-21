@@ -3,6 +3,11 @@
 module.exports = function() {
 
     /**
+     * Load and expose the schemata
+     */
+    exports.schemata = require('./schemata');
+
+    /**
      * Create a uni-directional connect graph from a string
      *
      * @params string
