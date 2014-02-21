@@ -42,20 +42,46 @@ module.exports = function(email) {
      * Database schema
      */
     var Schema = mongoose.Schema,
-    //ObjectId = Schema.Types.ObjectId;
     Mixed = Schema.Types.Mixed;
 
     /**
-     * Corpus schema
+     * Entry schema
      */
-    var corpusSchema = new Schema({
+    var entrySchema = new Schema({
         structuredText: { type: Mixed, required: true },
       });
 
-    // Export corpusSchema
+    /**
+     * A corpus entry consists of an ObjectId and some
+     * JSON structured text. This function takes the values
+     * associated with the keys provided and produces a string
+     * comprised of those values in the order given
+     *
+     * @param array
+     *
+     * @returns string
+     */
+    entrySchema.methods.text = function(fields) {
+        var str = '';
+
+        if (!fields) {
+          return str;
+        }
+
+        for (var i = 0; i < fields.length; i++) {
+          if (this.structuredText[fields[i]]) {
+            str += this.structuredText[fields[i]] + ' '; 
+          }
+        };
+        str = str.slice(0, -1);
+
+        return str;
+      };
+
+    // Export entrySchema
     try {
-        var corpusModel = connection.model('Corpus', corpusSchema);
-        exports.corpusModel = corpusModel;
+        var entryModel = connection.model('Entry', entrySchema);
+        exports.entryModel = entryModel;
       }
     catch (error) {}
 
@@ -65,3 +91,4 @@ module.exports = function(email) {
      */
     return exports;
   };
+
