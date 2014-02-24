@@ -30,6 +30,7 @@
   "dependencies": {
     "gebo-utils": "0.0.x",
     "mongoose": "~3.8.7",
-    "q": "~1.0.0"
+    "q": "~1.0.0",
+    "async": "~0.2.10"
   }
 }
