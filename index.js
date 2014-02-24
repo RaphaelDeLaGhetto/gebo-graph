@@ -104,6 +104,9 @@ module.exports = function(email) {
               deferred.reject(err);
             }
             else {
+              var entryId = entry._id;
+              console.log('entryId');
+              console.log(entryId);
               deferred.resolve(entry);
             }
           });
