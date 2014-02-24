@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "gebo-utils": "0.0.x",
-    "mongoose": "~3.8.7"
+    "mongoose": "~3.8.7",
+    "q": "~1.0.0"
   }
 }
