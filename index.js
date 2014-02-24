@@ -1,6 +1,13 @@
 'use strict';
 
-module.exports = function() {
+var schemata = require('./schemata'),
+    q = require('q'),
+    utils = require('gebo-utils');
+
+module.exports = function(email) {
+
+    // Turn the email into a mongo-friend database name
+    var dbName = utils.ensureDbName(email);
 
     /**
      * Load and expose the schemata
@@ -79,12 +86,28 @@ module.exports = function() {
     exports.weightedFromText = _weightedFromText;
 
     /**
-     * addToMongoGraph
+     * Take JSON-structured text for entry into
+     * the corpus and as an addition to the graph
      *
-     * @param string
+     * @param Object
+     * @param array
+     *
+     * @return promise
      */
-    function _addToMongoGraph(text) {
+    function _addToMongoGraph(structuredText, fields) {
+        var deferred = q.defer();
+        var corpusDb = new schemata.corpus(dbName);
+        var entry = new corpusDb.entryModel({ structuredText: structuredText });
 
+        entry.save(function(err, entry) {
+            if (err) {
+              deferred.reject(err);
+            }
+            else {
+              deferred.resolve(entry);
+            }
+          });
+        return deferred.promise;
       };
     exports.addToMongoGraph = _addToMongoGraph;
 
@@ -94,7 +117,9 @@ module.exports = function() {
      * @param string
      */
     function _subtractFromMongoGraph(text) {
-
+        var deferred = q.defer();
+        deferred.resolve();
+        return deferred.promise;
       };
     exports.subtractFromMongoGraph = _subtractFromMongoGraph;
 
@@ -104,10 +129,12 @@ module.exports = function() {
      * @param string
      */
     function _compareWithMongoGraph(text) {
-
+        var deferred = q.defer();
+        deferred.resolve();
+        return deferred.promise;
       };
     exports.compareWithMongoGraph = _compareWithMongoGraph;
 
 
     return exports;
-  }();
+  };

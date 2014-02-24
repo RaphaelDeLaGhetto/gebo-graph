@@ -1,4 +1,5 @@
-var graph = require('..');
+var graph = require('..')('dan@example.com'),
+    schemata = require('../schemata');
 
 var GEN_9_6 = '"Whoever sheds human blood,\n' +
               'by humans shall their blood be shed;\n' +
@@ -24,6 +25,24 @@ var MATT_6_9_13 = 'Pray then like this:\n' +
 
 var PROVERBS_16_33 = 'The    lot     is \t  cast into the lap,\n' +
                      '   but\tits    every  \tdecision is from the       Lord.\n\n\n';
+
+var DOC = {
+            source: 'The Bible',
+            book: 'Numbers',
+            chapter: 14,
+            start: 41,
+            end: 43,
+            text: 'But Moses said, “Why are you disobeying the ' +
+                  'Lord’s command? This will not succeed! Do not ' +
+                  'go up, because the Lord is not with you. You ' +
+                  'will be defeated by your enemies, for the ' +
+                  'Amalekites and the Canaanites will face you ' +
+                  'there. Because you have turned away from the ' +
+                  'Lord, he will not be with you and you will fall ' +
+                  'by the sword.”',
+        };
+
+
 /**
  * fromText
  */
@@ -175,11 +194,58 @@ exports.schemata = {
  */
 exports.addToMongoGraph = {
 
+    tearDown: function(callback) {
+        var corpusDb = new schemata.corpus('dan@example.com');
+        corpusDb.connection.on('open', function(err) {
+            corpusDb.connection.db.dropDatabase(function(err) {
+                if (err) {
+                  console.log(err);
+                }
+                corpusDb.connection.db.close();
+
+                var graphDb = new schemata.graph('dan@example.com');
+                graphDb.connection.on('open', function(err) {
+                    graphDb.connection.db.dropDatabase(function(err) {
+                        if (err) {
+                          console.log(err);
+                        }
+                        graphDb.connection.db.close();
+                        
+                        callback();
+                      });
+                  });
+              });
+          });
+    },
+
+
     'Add a record to the corpus collection': function(test) {
+        test.expect(1);
+        graph.addToMongoGraph(DOC).
+            then(function() {
+                var corpusDb = new schemata.corpus('dan@example.com');
+                corpusDb.entryModel.find({ 'structuredText.source': 'The Bible' },
+                    function(err, entries) {
+                        if (err) {
+                          console.log(err);
+                          test.ok(false);
+                        }
+                        test.equal(entries.length, 1);
+                        test.done();
+                      });
+              }).
+            catch(function(err) {
+                console.log(err);
+                test.ok(false);
+                test.done();
+              });
+    },
+
+    'Add each word in the fields specified to the graph collection': function(test) {
         test.done();
     },
 
-    'Add each word to the mongo graph collection': function(test) {
+    'Weight each word in the mongo graph collection': function(test) {
         test.done();
     },
 };
