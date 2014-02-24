@@ -49,7 +49,7 @@ module.exports = function(email) {
      */
     var connectionSchema = new Schema({
         corpusId: { type: ObjectId, required: true, unique: true },
-        weight: { type: Number, required: true, unique: true, default: 0 },
+        weight: { type: Number, required: true, default: 0 },
       });
 
     // Export connectionSchema
