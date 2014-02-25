@@ -48,9 +48,15 @@ module.exports = function(email) {
      * Connection schema
      */
     var connectionSchema = new Schema({
-        corpusId: { type: ObjectId, required: true, unique: true },
+        nextWord: { type: String, required: true },
+        corpusId: { type: ObjectId, required: true },
         weight: { type: Number, required: true, default: 0 },
       });
+    //connectionSchema.index({ corpusId: 1, nextWord: 1}, { unique: true });
+    connectionSchema.index({ corpusId: 1, nextWord: 1});
+    // http://mongoosejs.com/docs/guide.html#indexes
+    // Uncomment the following in production:
+    //connectionSchema.set('autoIndex', false);
 
     // Export connectionSchema
     try {
