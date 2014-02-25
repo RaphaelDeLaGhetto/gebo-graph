@@ -2,7 +2,8 @@
 
 var schemata = require('./schemata'),
     q = require('q'),
-    utils = require('gebo-utils');
+    utils = require('gebo-utils'),
+    async = require('async');
 
 module.exports = function(email) {
 
@@ -96,18 +97,100 @@ module.exports = function(email) {
      */
     function _addToMongoGraph(structuredText, fields) {
         var deferred = q.defer();
+
+        // Save the structured text to the corpus
         var corpusDb = new schemata.corpus(dbName);
         var entry = new corpusDb.entryModel({ structuredText: structuredText });
-
         entry.save(function(err, entry) {
+            corpusDb.connection.db.close();
             if (err) {
               deferred.reject(err);
             }
             else {
               var entryId = entry._id;
-              console.log('entryId');
-              console.log(entryId);
-              deferred.resolve(entry);
+              var text = entry.text(fields);
+            
+              var graphObj = _weightedFromText(text);
+
+              var graphDb = new schemata.graph(dbName);
+
+              async.eachSeries(Object.keys(graphObj), function(word, callback) {
+
+                    console.log(' -------------------------------- connections');
+                    // Connections
+                    var connections = [];
+                    async.eachSeries(Object.keys(graphObj[word]), function(nextWord, cb) {
+                        graphDb.connectionModel.findOne({ nextWord: nextWord, corpusId: entryId },
+                                function(err, connection) {
+                                    if (err) {
+                                      cb(err);
+                                    }
+                                    if (connection) {
+                                      connection.weight++;
+                                   }
+                                    else {
+                                      connection = new graphDb.connectionModel({
+                                              nextWord: nextWord,
+                                              corpusId: entryId,
+                                            });
+                                    }
+                                    connection.save(function(err) {
+                                          if (err) {
+                                            cb(err);
+                                          }
+                                          else {
+                                            console.log('connection', connection);
+
+                                            //connections.push(connection);
+
+                                            console.log(' -------------------------------- nodes');
+                                            graphDb.nodeModel.findOne({ word: word }, function(err, node) {
+                                                if (err) {
+                                                  cb(err);
+                                                }
+                                                if (node) {
+                                                  cb();
+                                                }
+                                                else {
+                                                  var graph = new graphDb.nodeModel({ word: word });
+                                                  graph.connections.push(connection);
+                                                  graph.save(function(err) {
+                                                        if (err) {
+                                                          console.log(err);
+                                                          cb(err);
+                                                        }
+                                                        else {
+                                                          cb();
+                                                        }
+                                                    });
+                                                }
+                                              });
+                                          }
+                                      });
+
+                                });
+                      },
+
+                      function(err) {
+                        if (err) {
+                          callback(err);
+                        }
+                        else {
+                          callback();
+                        }
+                      }); 
+                  },
+                function(err) {
+                    if (err) {
+                    }
+                    else {
+                      graphDb.connection.db.close();
+                      deferred.resolve(entryId);
+                    }
+                  });
+
+//              graph[splitText[splitText.length - 1]] = [];
+
             }
           });
         return deferred.promise;
