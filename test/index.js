@@ -1,5 +1,6 @@
 var graph = require('..')('dan@example.com'),
-    schemata = require('../schemata');
+    schemata = require('../schemata'),
+    utils = require('gebo-utils');
 
 var GEN_9_6 = '"Whoever sheds human blood,\n' +
               'by humans shall their blood be shed;\n' +
@@ -218,10 +219,9 @@ exports.addToMongoGraph = {
           });
     },
 
-
     'Add a record to the corpus collection': function(test) {
         test.expect(1);
-        graph.addToMongoGraph(DOC).
+        graph.addToMongoGraph(DOC, ['text']).
             then(function() {
                 var corpusDb = new schemata.corpus('dan@example.com');
                 corpusDb.entryModel.find({ 'structuredText.source': 'The Bible' },
@@ -242,11 +242,68 @@ exports.addToMongoGraph = {
     },
 
     'Add each word in the fields specified to the graph collection': function(test) {
-        test.done();
+        test.expect(2);
+        graph.addToMongoGraph(DOC, ['text']).
+            then(function() {
+                var graphDb = new schemata.graph('dan@example.com');
+                graphDb.nodeModel.find(function(err, nodes) {
+                        graphDb.connection.db.close();
+                        if (err) {
+                          console.log(err);
+                          test.ok(false);
+                        }
+                        console.log('nodes');
+                        console.log(nodes);
+                        console.log(nodes.length);
+                        test.equal(nodes.length, 43);
+//                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'and')].weight, 1);
+                        test.done();
+                      });
+              }).
+            catch(function(err) {
+                console.log(err);
+                test.ok(false);
+                test.done();
+              });
     },
 
     'Weight each word in the mongo graph collection': function(test) {
-        test.done();
+        test.expect(11);
+        graph.addToMongoGraph(DOC, ['text']).
+            then(function() {
+                var graphDb = new schemata.graph('dan@example.com');
+                graphDb.nodeModel.find(function(err, nodes) {
+                        graphDb.connection.db.close();
+                        if (err) {
+                          console.log(err);
+                          test.ok(false);
+                        }
+                        // Amalekites and
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Amalekites')].connections[0].weight, 1);
+                        // will not
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[0].weight, 1);
+                        // will be
+                        console.log('----------', nodes[utils.getIndexOfObject(nodes, 'word', 'will')]); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[1].weight, 1);
+//                        // will face
+//                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[2].weight, 0);
+//                        // will fall
+//                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[3].weight, 0);
+ 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'by')].connections[0].weight, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections[0].weight, 3);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[0].weight, 5);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[0].weight, 4);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'with')].connections[0].weight, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections[0].weight, 4);
+                        test.done();
+                      });
+              }).
+            catch(function(err) {
+                console.log(err);
+                test.ok(false);
+                test.done();
+              });
     },
 };
 
