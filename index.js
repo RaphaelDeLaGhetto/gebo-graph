@@ -173,15 +173,27 @@ module.exports = function(email) {
                         else {
                           // If true, then this is the last word in the text
                           if (Object.keys(graphObj[word]).length === 0) {
-                            var node = new graphDb.nodeModel({ word: word });
-                            node.save(function(err) {
-                                  if (err) {
-                                    console.log(err);
-                                    callback(err);
-                                  }
-                                  else {
-                                    callback();
-                                  }
+
+                            graphDb.nodeModel.findOne({ word: word }, function(err, node) {
+                                if (err) {
+                                  callback(err);
+                                }
+                                if (node) {
+                                  //callback();
+                                }
+                                else {
+                                  node = new graphDb.nodeModel({ word: word });
+                                  node.connections.push({ nextWord: '__STOP__', corpusId: entryId });
+                                }
+                                node.save(function(err) {
+                                      if (err) {
+                                        console.log(err);
+                                        callback(err);
+                                      }
+                                      else {
+                                        callback();
+                                      }
+                                  });
                               });
                           }
                           else {
