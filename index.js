@@ -109,66 +109,61 @@ module.exports = function(email) {
             else {
               var entryId = entry._id;
               var text = entry.text(fields);
-            
               var graphObj = _weightedFromText(text);
-
               var graphDb = new schemata.graph(dbName);
 
               async.eachSeries(Object.keys(graphObj), function(word, callback) {
-
-                    console.log(' -------------------------------- connections');
-                    // Connections
-                    var connections = [];
                     async.eachSeries(Object.keys(graphObj[word]), function(nextWord, cb) {
-                        graphDb.connectionModel.findOne({ nextWord: nextWord, corpusId: entryId },
-                                function(err, connection) {
+                        graphDb.nodeModel.findOne({ word: word }, function(err, node) {
+                            if (err) {
+                              cb(err);
+                            }
+                            if (node) {
+                              var match = false;
+                              for (var i = 0; i < node.connections.length; i++) {
+                                if (node.connections[i].nextWord === nextWord &&
+                                    node.connections[i].corpusId === entryId) {
+                                  node.connections[i].weight += graphObj[word][nextWord];
+//                                  node.markModified('connections');
+                                  match = true;
+                                  break;
+                                }; 
+                              }
+                              if (!match) {
+                                node.connections.push({
+                                        nextWord: nextWord,
+                                        corpusId: entryId,
+                                        weight: graphObj[word][nextWord],
+                                    });
+                              }
+                              node.save(function(err) {
                                     if (err) {
+                                      console.log(err);
                                       cb(err);
                                     }
-                                    if (connection) {
-                                      connection.weight++;
-                                   }
                                     else {
-                                      connection = new graphDb.connectionModel({
-                                              nextWord: nextWord,
-                                              corpusId: entryId,
-                                            });
+                                      cb();
                                     }
-                                    connection.save(function(err) {
-                                          if (err) {
-                                            cb(err);
-                                          }
-                                          else {
-                                            console.log('connection', connection);
-
-                                            //connections.push(connection);
-
-                                            console.log(' -------------------------------- nodes');
-                                            graphDb.nodeModel.findOne({ word: word }, function(err, node) {
-                                                if (err) {
-                                                  cb(err);
-                                                }
-                                                if (node) {
-                                                  cb();
-                                                }
-                                                else {
-                                                  var graph = new graphDb.nodeModel({ word: word });
-                                                  graph.connections.push(connection);
-                                                  graph.save(function(err) {
-                                                        if (err) {
-                                                          console.log(err);
-                                                          cb(err);
-                                                        }
-                                                        else {
-                                                          cb();
-                                                        }
-                                                    });
-                                                }
-                                              });
-                                          }
-                                      });
-
                                 });
+                            }
+                            else {
+                              node = new graphDb.nodeModel({ word: word });
+                              node.connections.push({
+                                      nextWord: nextWord,
+                                      corpusId: entryId,
+                                      weight: graphObj[word][nextWord],
+                                    });
+                              node.save(function(err) {
+                                    if (err) {
+                                      console.log(err);
+                                      cb(err);
+                                    }
+                                    else {
+                                      cb();
+                                    }
+                                });
+                              }
+                          });
                       },
 
                       function(err) {
@@ -176,21 +171,34 @@ module.exports = function(email) {
                           callback(err);
                         }
                         else {
-                          callback();
+                          // If true, then this is the last word in the text
+                          if (Object.keys(graphObj[word]).length === 0) {
+                            var node = new graphDb.nodeModel({ word: word });
+                            node.save(function(err) {
+                                  if (err) {
+                                    console.log(err);
+                                    callback(err);
+                                  }
+                                  else {
+                                    callback();
+                                  }
+                              });
+                          }
+                          else {
+                            callback();
+                          }
                         }
                       }); 
                   },
                 function(err) {
                     if (err) {
+                      callback(err);
                     }
                     else {
                       graphDb.connection.db.close();
                       deferred.resolve(entryId);
                     }
                   });
-
-//              graph[splitText[splitText.length - 1]] = [];
-
             }
           });
         return deferred.promise;

@@ -242,7 +242,7 @@ exports.addToMongoGraph = {
     },
 
     'Add each word in the fields specified to the graph collection': function(test) {
-        test.expect(2);
+        test.expect(1);
         graph.addToMongoGraph(DOC, ['text']).
             then(function() {
                 var graphDb = new schemata.graph('dan@example.com');
@@ -252,11 +252,7 @@ exports.addToMongoGraph = {
                           console.log(err);
                           test.ok(false);
                         }
-                        console.log('nodes');
-                        console.log(nodes);
-                        console.log(nodes.length);
                         test.equal(nodes.length, 43);
-//                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'and')].weight, 1);
                         test.done();
                       });
               }).
@@ -268,7 +264,7 @@ exports.addToMongoGraph = {
     },
 
     'Weight each word in the mongo graph collection': function(test) {
-        test.expect(11);
+        test.expect(187);
         graph.addToMongoGraph(DOC, ['text']).
             then(function() {
                 var graphDb = new schemata.graph('dan@example.com');
@@ -278,24 +274,206 @@ exports.addToMongoGraph = {
                           console.log(err);
                           test.ok(false);
                         }
-                        // Amalekites and
-                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Amalekites')].connections[0].weight, 1);
-                        // will not
-                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[0].weight, 1);
-                        // will be
-                        console.log('----------', nodes[utils.getIndexOfObject(nodes, 'word', 'will')]); 
-                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[1].weight, 1);
-//                        // will face
-//                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[2].weight, 0);
-//                        // will fall
-//                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[3].weight, 0);
+
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'But')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'But')].connections[0].nextWord, 'Moses');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'But')].connections[0].weight, 0);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Moses')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Moses')].connections[0].nextWord, 'said,');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Moses')].connections[0].weight, 0);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'said,')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'said,')].connections[0].nextWord, '“Why');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'said,')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', '“Why')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', '“Why')].connections[0].nextWord, 'are');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', '“Why')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'are')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'are')].connections[0].nextWord, 'you');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'are')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections.length, 5);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections[0].nextWord, 'disobeying');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'disobeying')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'disobeying')].connections[0].nextWord, 'the');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'disobeying')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections.length, 6);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[0].nextWord, 'Lord’s');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Lord’s')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Lord’s')].connections[0].nextWord, 'command?');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Lord’s')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'command?')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'command?')].connections[0].nextWord, 'This');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'command?')].connections[0].weight, 0); 
+
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'This')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'This')].connections[0].nextWord, 'will');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'This')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections.length, 4);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[0].nextWord, 'not');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[0].weight, 1); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections.length, 4);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections[0].nextWord, 'succeed!');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections[0].weight, 0); 
+
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'succeed!')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'succeed!')].connections[0].nextWord, 'Do');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'succeed!')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Do')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Do')].connections[0].nextWord, 'not');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Do')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections.length, 4);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections[1].nextWord, 'go');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections[1].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'go')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'go')].connections[0].nextWord, 'up,');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'go')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'up,')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'up,')].connections[0].nextWord, 'because');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'up,')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'because')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'because')].connections[0].nextWord, 'the');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'because')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections.length, 6);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[1].nextWord, 'Lord');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[1].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Lord')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Lord')].connections[0].nextWord, 'is');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Lord')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'is')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'is')].connections[0].nextWord, 'not');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'is')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections.length, 4);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections[2].nextWord, 'with');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections[2].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'with')].connections.length, 2);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'with')].connections[0].nextWord, 'you.');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'with')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you.')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you.')].connections[0].nextWord, 'You');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you.')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'You')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'You')].connections[0].nextWord, 'will');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'You')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections.length, 4);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[1].nextWord, 'be');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[1].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'be')].connections.length, 2);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'be')].connections[0].nextWord, 'defeated');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'be')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'defeated')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'defeated')].connections[0].nextWord, 'by');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'defeated')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'by')].connections.length, 2);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'by')].connections[0].nextWord, 'your');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'by')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'your')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'your')].connections[0].nextWord, 'enemies,');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'your')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'enemies,')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'enemies,')].connections[0].nextWord, 'for');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'enemies,')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'for')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'for')].connections[0].nextWord, 'the');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'for')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections.length, 6);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[2].nextWord, 'Amalekites');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[2].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Amalekites')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Amalekites')].connections[0].nextWord, 'and');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Amalekites')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'and')].connections.length, 2);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'and')].connections[0].nextWord, 'the');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'and')].connections[0].weight, 0); 
  
-                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'by')].connections[0].weight, 1);
-                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections[0].weight, 3);
-                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[0].weight, 5);
-                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[0].weight, 4);
-                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'with')].connections[0].weight, 1);
-                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections[0].weight, 4);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections.length, 6);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[3].nextWord, 'Canaanites');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[3].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Canaanites')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Canaanites')].connections[0].nextWord, 'will');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Canaanites')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections.length, 4);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[2].nextWord, 'face');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[2].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'face')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'face')].connections[0].nextWord, 'you');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'face')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections.length, 5);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections[1].nextWord, 'there.');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections[1].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'there.')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'there.')].connections[0].nextWord, 'Because');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'there.')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Because')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Because')].connections[0].nextWord, 'you');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Because')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections.length, 5);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections[2].nextWord, 'have');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections[2].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'have')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'have')].connections[0].nextWord, 'turned');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'have')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'turned')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'turned')].connections[0].nextWord, 'away');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'turned')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'away')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'away')].connections[0].nextWord, 'from');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'away')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'from')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'from')].connections[0].nextWord, 'the');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'from')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections.length, 6);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[4].nextWord, 'Lord,');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[4].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Lord,')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Lord,')].connections[0].nextWord, 'he');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'Lord,')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'he')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'he')].connections[0].nextWord, 'will');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'he')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections.length, 4);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[0].nextWord, 'not');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[0].weight, 1); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections.length, 4);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections[3].nextWord, 'be');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'not')].connections[3].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'be')].connections.length, 2);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'be')].connections[1].nextWord, 'with');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'be')].connections[1].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'with')].connections.length, 2);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'with')].connections[1].nextWord, 'you');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'with')].connections[1].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections.length, 5);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections[3].nextWord, 'and');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections[3].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'and')].connections.length, 2);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'and')].connections[1].nextWord, 'you');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'and')].connections[1].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections.length, 5);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections[4].nextWord, 'will');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'you')].connections[4].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections.length, 4);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[3].nextWord, 'fall');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'will')].connections[3].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'fall')].connections.length, 1);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'fall')].connections[0].nextWord, 'by');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'fall')].connections[0].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'by')].connections.length, 2);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'by')].connections[1].nextWord, 'the');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'by')].connections[1].weight, 0); 
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections.length, 6);
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[5].nextWord, 'sword.”');
+                        test.equal(nodes[utils.getIndexOfObject(nodes, 'word', 'the')].connections[5].weight, 0); 
+                        test.ok(nodes[utils.getIndexOfObject(nodes, 'word', 'sword.”')]);
+   
+//'But Moses said, “Why are you disobeying the ' +
+//                  'Lord’s command? This will not succeed! Do not ' +
+//                  'go up, because the Lord is not with you. You ' +
+//                  'will be defeated by your enemies, for the ' +
+//                  'Amalekites and the Canaanites will face you ' +
+//                  'there. Because you have turned away from the ' +
+//                  'Lord, he will not be with you and you will fall ' +
+//                  'by the sword.”',
                         test.done();
                       });
               }).
