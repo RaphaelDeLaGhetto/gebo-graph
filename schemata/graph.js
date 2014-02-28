@@ -49,11 +49,19 @@ module.exports = function(email) {
      */
     var connectionSchema = new Schema({
         nextWord: { type: String, required: true },
-        corpusId: { type: ObjectId, required: true },
-        weight: { type: Number, required: true, default: 0 },
+        corpusIds: [ObjectId],
       });
+
+    /**
+     * The weight of a connection is determined by how many
+     * corpusIds contain the nextWord
+     */
+    connectionSchema.virtual('weight').get(function() {
+        return this.corpusIds.length;
+      });
+
     //connectionSchema.index({ corpusId: 1, nextWord: 1}, { unique: true });
-    connectionSchema.index({ corpusId: 1, nextWord: 1});
+    //connectionSchema.index({ corpusId: 1, nextWord: 1});
     // http://mongoosejs.com/docs/guide.html#indexes
     // Uncomment the following in production:
     //connectionSchema.set('autoIndex', false);
