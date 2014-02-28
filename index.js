@@ -72,12 +72,12 @@ module.exports = function(email) {
               graph[thisWord][nextWord]++;
             }
             else {
-              graph[thisWord][nextWord] = 0;
+              graph[thisWord][nextWord] = 1;
             }
           } 
           else {
             graph[thisWord] = {};
-            graph[thisWord][nextWord] = 0;
+            graph[thisWord][nextWord] = 1;
           }
         }
         graph[splitText[splitText.length - 1]] = {};
@@ -121,9 +121,15 @@ module.exports = function(email) {
                             if (node) {
                               var match = false;
                               for (var i = 0; i < node.connections.length; i++) {
-                                if (node.connections[i].nextWord === nextWord &&
-                                    node.connections[i].corpusId === entryId) {
+                                if (node.connections[i].nextWord === nextWord) {// &&
+                                    //node.connections[i].corpusId === entryId) {
                                   node.connections[i].weight += graphObj[word][nextWord];
+                                  // experimental
+                                  for (var j = 0; j < graphObj[word][nextWord]; j++){
+                                    node.connections[i].corpusIds.push(entryId);
+                                  }
+                                  //console.log('node');
+                                  //console.log(node);
 //                                  node.markModified('connections');
                                   match = true;
                                   break;
@@ -135,6 +141,11 @@ module.exports = function(email) {
                                         corpusId: entryId,
                                         weight: graphObj[word][nextWord],
                                     });
+  
+                                //experimental
+                                for (var j = 0; j < graphObj[word][nextWord]; j++){
+                                  node.connections[node.connections.length - 1].corpusIds.push(entryId);
+                                }
                               }
                               node.save(function(err) {
                                     if (err) {
@@ -153,6 +164,10 @@ module.exports = function(email) {
                                       corpusId: entryId,
                                       weight: graphObj[word][nextWord],
                                     });
+                              // experimental
+                              for (var j = 0; j < graphObj[word][nextWord]; j++) {
+                                node.connections[0].corpusIds.push(entryId);
+                              }
                               node.save(function(err) {
                                     if (err) {
                                       console.log(err);
@@ -179,11 +194,33 @@ module.exports = function(email) {
                                   callback(err);
                                 }
                                 if (node) {
-                                  //callback();
+                                  var match = false;
+                                  for (var i = 0; i < node.connections.length; i++) {
+                                    if (node.connections[i].nextWord === '__STOP__' &&
+                                        node.connections[i].corpusId === entryId) {
+                                      node.connections[i].weight += graphObj[word][nextWord];
+                                      
+                                      //node.connections[node.connections.length - 1].corpusIds.push(entryId);
+    //                                  node.markModified('connections');
+                                      match = true;
+                                      break;
+                                    }; 
+                                  }
+                                  if (!match) {
+                                    node.connections.push({
+                                            nextWord: '__STOP__',
+                                            corpusId: entryId,
+                                        });
+                                    // experimental
+                                    node.connections[node.connections.length - 1].corpusIds.push(entryId);
+                                  }
                                 }
                                 else {
                                   node = new graphDb.nodeModel({ word: word });
                                   node.connections.push({ nextWord: '__STOP__', corpusId: entryId });
+                                  
+                                  // experimental
+                                  node.connections[0].corpusIds.push(entryId);
                                 }
                                 node.save(function(err) {
                                       if (err) {
